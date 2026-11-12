@@ -7,7 +7,7 @@ import { STATIONS } from '@/lib/layout';
 
 const L = 12.2, W = 2.5, H = 2.9;
 
-function sideLabel() {
+export function sideLabel() {
   const c = document.createElement('canvas');
   c.width = 2048;
   c.height = 512;
@@ -34,7 +34,7 @@ function sideLabel() {
   return t;
 }
 
-function useContainerMaterials() {
+export function useContainerMaterials() {
   return useMemo(() => {
     const ribs = corrugatedNormal();
     const sideNormal = ribs.clone();
@@ -62,7 +62,7 @@ function useContainerMaterials() {
   }, []);
 }
 
-function Container({ position, m, index }: { position: [number, number, number]; m: ReturnType<typeof useContainerMaterials>; index: number }) {
+export function Container({ position, m, index }: { position: [number, number, number]; m: ReturnType<typeof useContainerMaterials>; index: number }) {
   const led = useRef<THREE.Mesh>(null);
   const ledMat = useMemo(() => m.led.clone(), [m]);
   useFrame(({ clock }) => {
@@ -114,25 +114,7 @@ export default function BatteryYard() {
         <Container key={i} position={p} m={m} index={i} />
       ))}
       {/* power conversion skid + transformer between the rows */}
-      <group position={[x + 13, 0, z]}>
-        <mesh position={[0, 0.2, 0]} receiveShadow material={m.pad}>
-          <boxGeometry args={[5, 0.4, 9]} />
-        </mesh>
-        <mesh position={[0, 1.6, -1.8]} castShadow receiveShadow>
-          <boxGeometry args={[2.6, 2.4, 3.6]} />
-          <meshStandardMaterial color="#5b6c73" metalness={0.4} roughness={0.5} />
-        </mesh>
-        <mesh position={[0, 1.4, 2.4]} castShadow receiveShadow>
-          <boxGeometry args={[2.2, 2.0, 2.4]} />
-          <meshStandardMaterial color="#a8afb3" metalness={0.5} roughness={0.45} />
-        </mesh>
-        {[-0.6, 0, 0.6].map((dx) => (
-          <mesh key={dx} position={[dx, 2.75, 2.4]} castShadow>
-            <cylinderGeometry args={[0.09, 0.12, 0.7, 12]} />
-            <meshStandardMaterial color="#7b5a3b" roughness={0.6} />
-          </mesh>
-        ))}
-      </group>
+      <PcsSkid position={[x + 13, 0, z]} pad={m.pad} />
       {/* perimeter fence */}
       <Fence x0={x - 13} x1={x + 17} z0={z - 17} z1={z + 17} />
     </group>
@@ -162,5 +144,30 @@ function Fence({ x0, x1, z0, z1 }: { x0: number; x1: number; z0: number; z1: num
     <lineSegments geometry={geo}>
       <lineBasicMaterial color="#6f7478" transparent opacity={0.7} />
     </lineSegments>
+  );
+}
+
+/** Power conversion system skid with step-up transformer. */
+export function PcsSkid({ position = [0, 0, 0], pad }: { position?: [number, number, number]; pad: THREE.Material }) {
+  return (
+    <group position={position}>
+      <mesh position={[0, 0.2, 0]} receiveShadow material={pad}>
+        <boxGeometry args={[5, 0.4, 9]} />
+      </mesh>
+      <mesh position={[0, 1.6, -1.8]} castShadow receiveShadow>
+        <boxGeometry args={[2.6, 2.4, 3.6]} />
+        <meshStandardMaterial color="#5b6c73" metalness={0.4} roughness={0.5} />
+      </mesh>
+      <mesh position={[0, 1.4, 2.4]} castShadow receiveShadow>
+        <boxGeometry args={[2.2, 2.0, 2.4]} />
+        <meshStandardMaterial color="#a8afb3" metalness={0.5} roughness={0.45} />
+      </mesh>
+      {[-0.6, 0, 0.6].map((dx) => (
+        <mesh key={dx} position={[dx, 2.75, 2.4]} castShadow>
+          <cylinderGeometry args={[0.09, 0.12, 0.7, 12]} />
+          <meshStandardMaterial color="#7b5a3b" roughness={0.6} />
+        </mesh>
+      ))}
+    </group>
   );
 }

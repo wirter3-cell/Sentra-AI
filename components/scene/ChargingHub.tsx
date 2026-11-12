@@ -10,7 +10,7 @@ import { usePvMaterials } from './SolarField';
 const CAR_URL = '/models/car.glb';
 
 /** CC-BY 4.0 "Car Concept" by Eric Chadwick / DGG (Khronos glTF sample assets), logos removed. */
-function Car({ position, rotation = 0, paint }: { position: [number, number, number]; rotation?: number; paint: string }) {
+export function Car({ position, rotation = 0, paint }: { position: [number, number, number]; rotation?: number; paint: string }) {
   const { scene } = useGLTF(CAR_URL);
   const car = useMemo(() => {
     const root = scene.clone(true);
@@ -49,7 +49,7 @@ function Car({ position, rotation = 0, paint }: { position: [number, number, num
 }
 useGLTF.preload(CAR_URL);
 
-function Charger({ position, percent, ring }: { position: [number, number, number]; percent: number; ring: boolean }) {
+export function Charger({ position, percent, ring }: { position: [number, number, number]; percent: number; ring: boolean }) {
   const screen = useMemo(() => chargerScreen(percent), [percent]);
   const ringRef = useRef<THREE.MeshStandardMaterial>(null);
   useFrame(({ clock }) => {
@@ -99,7 +99,7 @@ function Cable({ points }: { points: [number, number, number][] }) {
   );
 }
 
-function Canopy({ cx, cz }: { cx: number; cz: number }) {
+export function Canopy({ cx, cz }: { cx: number; cz: number }) {
   const pv = usePvMaterials();
   const ref = useRef<THREE.InstancedMesh>(null);
   const cols = 13, rows = 4;

@@ -30,7 +30,7 @@ export function usePvMaterials() {
 }
 
 /** A single-axis tracker row: modules on a torque tube that rotates. */
-function TrackerRow({
+export function TrackerRow({
   x,
   zCenter,
   count,
@@ -126,20 +126,27 @@ export default function SolarField({ rows = FIELD.rows }: { rows?: number }) {
         <boxGeometry args={[0.5, 0.7, 0.25]} />
       </instancedMesh>
       {/* central inverter skid */}
-      <group position={[cx + (rows / 2) * FIELD.rowSpacing + 3, 0, cz + 12]}>
-        <mesh position={[0, 0.15, 0]} receiveShadow>
-          <boxGeometry args={[4.2, 0.3, 7.5]} />
-          <meshStandardMaterial color="#9c9a94" roughness={0.9} />
-        </mesh>
-        <mesh position={[0, 1.55, -1.4]} castShadow receiveShadow>
-          <boxGeometry args={[2.4, 2.5, 3.6]} />
-          <meshStandardMaterial color="#e9ebec" roughness={0.45} metalness={0.2} />
-        </mesh>
-        <mesh position={[0, 1.3, 2.2]} castShadow receiveShadow>
-          <boxGeometry args={[2.2, 2.0, 2.2]} />
-          <meshStandardMaterial color="#5b6c73" roughness={0.5} metalness={0.4} />
-        </mesh>
-      </group>
+      <InverterSkid position={[cx + (rows / 2) * FIELD.rowSpacing + 3, 0, cz + 12]} />
+    </group>
+  );
+}
+
+/** Central inverter skid for the solar field. */
+export function InverterSkid({ position = [0, 0, 0] }: { position?: [number, number, number] }) {
+  return (
+    <group position={position}>
+      <mesh position={[0, 0.15, 0]} receiveShadow>
+        <boxGeometry args={[4.2, 0.3, 7.5]} />
+        <meshStandardMaterial color="#9c9a94" roughness={0.9} />
+      </mesh>
+      <mesh position={[0, 1.55, -1.4]} castShadow receiveShadow>
+        <boxGeometry args={[2.4, 2.5, 3.6]} />
+        <meshStandardMaterial color="#e9ebec" roughness={0.45} metalness={0.2} />
+      </mesh>
+      <mesh position={[0, 1.3, 2.2]} castShadow receiveShadow>
+        <boxGeometry args={[2.2, 2.0, 2.2]} />
+        <meshStandardMaterial color="#5b6c73" roughness={0.5} metalness={0.4} />
+      </mesh>
     </group>
   );
 }

@@ -5,3 +5,5 @@ assets-src/
 *.tsbuildinfo
 next-env.d.ts
 .DS_Store
+model-kit/
+nurun-model-kit.zip
