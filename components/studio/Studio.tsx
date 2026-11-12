@@ -11,8 +11,7 @@ import { Container, PcsSkid, useContainerMaterials } from '@/components/scene/Ba
 import { Canopy, Charger } from '@/components/scene/ChargingHub';
 import { InverterSkid, TrackerRow, usePvMaterials } from '@/components/scene/SolarField';
 import { FIELD } from '@/lib/layout';
-import { chargerScreen, solarModuleTexture } from '@/lib/textures';
-import { sideLabel } from '@/components/scene/BatteryYard';
+import { chargerScreenTexture, containerSideTexture, hvacFaceTexture } from '@/lib/equipment';
 
 export const MODELS = ['pv-module', 'solar-tracker', 'battery-container', 'pcs-transformer', 'ev-charger', 'solar-carport', 'inverter-skid'] as const;
 type ModelId = (typeof MODELS)[number];
@@ -39,9 +38,15 @@ function Tracker() {
     <group>
       <TrackerRow x={0} zCenter={0} count={count} materials={pv} phase={0} />
       {[-0.5, 0, 0.5].map((f) => (
-        <mesh key={f} position={[0, 0.975, f * length]} material={pv.steel} castShadow>
-          <boxGeometry args={[0.16, 1.95, 0.12]} />
-        </mesh>
+        <group key={f}>
+          <mesh position={[0, 0.975, f * length]} material={pv.steel} castShadow>
+            <boxGeometry args={[0.16, 1.95, 0.12]} />
+          </mesh>
+          <mesh position={[0, 0.1, f * length]} castShadow receiveShadow>
+            <cylinderGeometry args={[0.24, 0.27, 0.2, 12]} />
+            <meshStandardMaterial color="#c4c2bc" roughness={0.9} />
+          </mesh>
+        </group>
       ))}
     </group>
   );
@@ -53,8 +58,7 @@ function ContainerModel() {
 }
 
 function Pcs() {
-  const m = useContainerMaterials();
-  return <PcsSkid pad={m.pad} />;
+  return <PcsSkid />;
 }
 
 function Model({ id }: { id: ModelId }) {
@@ -63,7 +67,7 @@ function Model({ id }: { id: ModelId }) {
     case 'solar-tracker': return <Tracker />;
     case 'battery-container': return <ContainerModel />;
     case 'pcs-transformer': return <Pcs />;
-    case 'ev-charger': return <Charger position={[0, 0, 0]} percent={72} ring />;
+    case 'ev-charger': return <Charger position={[0, 0, 0]} percent={72} ring holstered />;
     case 'solar-carport': return <Canopy cx={0} cz={0} />;
     case 'inverter-skid': return <InverterSkid />;
   }
@@ -108,9 +112,9 @@ function Scene({ id, view }: { id: ModelId; view: string }) {
     (window as unknown as { __textures: () => Record<string, string> }).__textures = () => {
       const url = (t: THREE.Texture) => (t.image as HTMLCanvasElement).toDataURL('image/png');
       return {
-        'pv-module-cells': url(solarModuleTexture()),
-        'battery-container-side-label': url(sideLabel()),
-        'ev-charger-screen': url(chargerScreen(72)),
+        'battery-container-side-label': url(containerSideTexture()),
+        'battery-container-hvac': url(hvacFaceTexture()),
+        'ev-charger-screen': url(chargerScreenTexture(72)),
       };
     };
   }, []);

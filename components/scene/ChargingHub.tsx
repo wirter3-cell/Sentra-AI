@@ -3,9 +3,10 @@ import { useLayoutEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { RoundedBox, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
-import { chargerScreen, grainTextures } from '@/lib/textures';
+import { grainTextures } from '@/lib/textures';
+import { chargerScreenTexture } from '@/lib/equipment';
 import { STATIONS } from '@/lib/layout';
-import { usePvMaterials } from './SolarField';
+import { useConcrete, usePvMaterials } from './SolarField';
 
 const CAR_URL = '/models/car.glb';
 
@@ -49,40 +50,98 @@ export function Car({ position, rotation = 0, paint }: { position: [number, numb
 }
 useGLTF.preload(CAR_URL);
 
-export function Charger({ position, percent, ring }: { position: [number, number, number]; percent: number; ring: boolean }) {
-  const screen = useMemo(() => chargerScreen(percent), [percent]);
+/** CCS-style charging gun: grip, nozzle and strain relief. */
+function Connector() {
+  return (
+    <group>
+      <RoundedBox args={[0.07, 0.2, 0.09]} radius={0.025} smoothness={3} castShadow>
+        <meshStandardMaterial color="#1c2023" roughness={0.55} />
+      </RoundedBox>
+      <mesh position={[0, 0.13, 0.03]} rotation={[0.5, 0, 0]} castShadow>
+        <cylinderGeometry args={[0.042, 0.048, 0.1, 16]} />
+        <meshStandardMaterial color="#25292c" roughness={0.45} />
+      </mesh>
+      <mesh position={[0, 0.17, 0.055]} rotation={[0.5, 0, 0]}>
+        <cylinderGeometry args={[0.036, 0.036, 0.012, 16]} />
+        <meshStandardMaterial color="#a0ff75" emissive="#a0ff75" emissiveIntensity={1.5} toneMapped={false} />
+      </mesh>
+      <mesh position={[0, -0.13, 0]} castShadow>
+        <cylinderGeometry args={[0.022, 0.03, 0.08, 10]} />
+        <meshStandardMaterial color="#111416" roughness={0.6} />
+      </mesh>
+    </group>
+  );
+}
+
+/**
+ * DC charging pedestal. `holstered` hangs the gun on the side with a cable
+ * loop; otherwise the gun is plugged into a car and only the holster shows.
+ */
+export function Charger({ position, percent, ring, holstered = false }: { position: [number, number, number]; percent: number; ring: boolean; holstered?: boolean }) {
+  const screen = useMemo(() => chargerScreenTexture(percent), [percent]);
+  const plinth = useConcrete(1, 41);
   const ringRef = useRef<THREE.MeshStandardMaterial>(null);
+  const loop = useMemo(() => {
+    const curve = new THREE.CatmullRomCurve3(
+      [
+        [0.24, 0.62, -0.02],
+        [0.36, 0.42, 0.02],
+        [0.42, 0.22, 0.12],
+        [0.4, 0.2, 0.26],
+        [0.36, 0.45, 0.24],
+        [0.36, 0.78, 0.2],
+      ].map((p) => new THREE.Vector3(...(p as [number, number, number]))),
+    );
+    return new THREE.TubeGeometry(curve, 48, 0.02, 8, false);
+  }, []);
   useFrame(({ clock }) => {
     if (ringRef.current && ring) ringRef.current.emissiveIntensity = 2.2 + Math.sin(clock.elapsedTime * 2.2) * 1.2;
   });
   return (
     <group position={position}>
-      <mesh position={[0, 0.08, 0]} receiveShadow castShadow>
-        <boxGeometry args={[0.9, 0.16, 0.65]} />
-        <meshStandardMaterial color="#8e8c86" roughness={0.9} />
+      <mesh position={[0, 0.06, 0]} receiveShadow castShadow material={plinth}>
+        <boxGeometry args={[0.95, 0.12, 0.7]} />
       </mesh>
-      <RoundedBox args={[0.6, 1.75, 0.34]} radius={0.07} smoothness={4} position={[0, 1.04, 0]} castShadow receiveShadow>
+      <mesh position={[0, 0.15, 0]} receiveShadow castShadow>
+        <boxGeometry args={[0.66, 0.06, 0.4]} />
+        <meshStandardMaterial color="#9ea4a8" metalness={0.8} roughness={0.35} />
+      </mesh>
+      <RoundedBox args={[0.6, 1.75, 0.34]} radius={0.07} smoothness={4} position={[0, 1.06, 0]} castShadow receiveShadow>
         <meshPhysicalMaterial color="#f2f3f2" roughness={0.3} metalness={0.05} clearcoat={0.6} />
       </RoundedBox>
+      {/* brushed aluminium rear shell */}
+      <RoundedBox args={[0.58, 1.72, 0.1]} radius={0.04} smoothness={3} position={[0, 1.06, -0.14]} castShadow>
+        <meshStandardMaterial color="#b9bec1" metalness={0.9} roughness={0.32} />
+      </RoundedBox>
       {/* glass front + screen */}
-      <mesh position={[0, 1.22, 0.172]}>
+      <mesh position={[0, 1.24, 0.172]}>
         <planeGeometry args={[0.46, 1.05]} />
         <meshPhysicalMaterial color="#05090a" roughness={0.08} metalness={0.2} clearcoat={1} />
       </mesh>
-      <mesh position={[0, 1.36, 0.174]}>
-        <planeGeometry args={[0.34, 0.51]} />
+      <mesh position={[0, 1.38, 0.174]}>
+        <planeGeometry args={[0.36, 0.54]} />
         <meshBasicMaterial map={screen} toneMapped={false} />
       </mesh>
       {/* status light */}
-      <mesh position={[0.305, 1.04, 0]}>
+      <mesh position={[0.305, 1.06, 0.02]}>
         <boxGeometry args={[0.012, 1.4, 0.05]} />
         <meshStandardMaterial ref={ringRef} color="#a0ff75" emissive="#a0ff75" emissiveIntensity={ring ? 3 : 0.6} toneMapped={false} />
       </mesh>
-      {/* holster */}
-      <mesh position={[0.24, 0.92, 0.2]} castShadow>
-        <boxGeometry args={[0.12, 0.2, 0.1]} />
+      {/* holster on the right flank */}
+      <mesh position={[0.33, 0.95, 0.06]} castShadow>
+        <boxGeometry args={[0.06, 0.22, 0.14]} />
         <meshStandardMaterial color="#1b1f21" roughness={0.6} />
       </mesh>
+      {holstered && (
+        <>
+          <group position={[0.38, 0.88, 0.17]} rotation={[0.25, 0, -0.1]}>
+            <Connector />
+          </group>
+          <mesh geometry={loop} castShadow>
+            <meshStandardMaterial color="#111416" roughness={0.55} />
+          </mesh>
+        </>
+      )}
     </group>
   );
 }
@@ -116,7 +175,8 @@ export function Canopy({ cx, cz }: { cx: number; cz: number }) {
       }
     ref.current!.instanceMatrix.needsUpdate = true;
   }, []);
-  const steel = pv.steel;
+  const steel = useMemo(() => new THREE.MeshStandardMaterial({ color: '#4f565b', metalness: 0.6, roughness: 0.45 }), []);
+  const footing = useConcrete(1, 52);
   return (
     <group position={[cx, 0, cz]}>
       <group position={[0, 4.35, 0]} rotation={[0.1, 0, 0]}>
@@ -130,6 +190,11 @@ export function Canopy({ cx, cz }: { cx: number; cz: number }) {
       {[-6.5, 0, 6.5].map((x) => (
         <mesh key={x} position={[x, 2.2, -2.6]} material={steel} castShadow receiveShadow>
           <boxGeometry args={[0.28, 4.4, 0.28]} />
+        </mesh>
+      ))}
+      {[-6.5, 0, 6.5].map((x) => (
+        <mesh key={'f' + x} position={[x, 0.2, -2.6]} material={footing} castShadow receiveShadow>
+          <boxGeometry args={[0.7, 0.4, 0.7]} />
         </mesh>
       ))}
       {[-6.5, 0, 6.5].map((x) => (
@@ -175,7 +240,7 @@ export default function ChargingHub() {
       ))}
       <Canopy cx={x} cz={z + 1.2} />
       {bays.map((bx, i) => (
-        <Charger key={bx} position={[x + bx + 2.15, 0.12, z - 1.5]} percent={[72, 41, 88][i]} ring={i !== 2} />
+        <Charger key={bx} position={[x + bx + 2.15, 0.12, z - 1.5]} percent={[72, 41, 88][i]} ring={i !== 2} holstered={i === 2} />
       ))}
       <Car position={[x, 0.12, z + 1.4]} paint="#e9ecec" />
       <Car position={[x - 4.3, 0.12, z + 1.2]} paint="#0f3b38" />

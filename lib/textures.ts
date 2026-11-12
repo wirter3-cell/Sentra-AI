@@ -107,44 +107,6 @@ export function sandTextures(size = 512) {
   return { map: tex(c, true), normal: tex(heightToNormal(h, size, 2.2), false) };
 }
 
-/** A monocrystalline PV module (portrait), 6 x 12 cells with aluminium frame. */
-export function solarModuleTexture() {
-  const W = 384, H = 768;
-  const c = canvas(W, H);
-  const g = c.getContext('2d')!;
-  g.fillStyle = '#c9ccd1'; // frame
-  g.fillRect(0, 0, W, H);
-  g.fillStyle = '#e6e8ea'; // backsheet showing in gaps
-  g.fillRect(6, 6, W - 12, H - 12);
-  const cols = 6, rows = 12, pad = 10, gap = 3;
-  const cw = (W - pad * 2 - gap * (cols - 1)) / cols;
-  const ch = (H - pad * 2 - gap * (rows - 1)) / rows;
-  const r = rng(3);
-  for (let j = 0; j < rows; j++) {
-    for (let i = 0; i < cols; i++) {
-      const x = pad + i * (cw + gap), y = pad + j * (ch + gap);
-      const k = r() * 6;
-      g.fillStyle = `rgb(${12 + k},${20 + k},${42 + k * 2})`;
-      // monocrystalline cells have chamfered corners
-      const cut = 5;
-      g.beginPath();
-      g.moveTo(x + cut, y); g.lineTo(x + cw - cut, y); g.lineTo(x + cw, y + cut);
-      g.lineTo(x + cw, y + ch - cut); g.lineTo(x + cw - cut, y + ch); g.lineTo(x + cut, y + ch);
-      g.lineTo(x, y + ch - cut); g.lineTo(x, y + cut); g.closePath(); g.fill();
-      // fingers
-      g.strokeStyle = 'rgba(120,140,170,0.10)';
-      g.lineWidth = 1;
-      for (let f = 3; f < ch; f += 3) { g.beginPath(); g.moveTo(x, y + f); g.lineTo(x + cw, y + f); g.stroke(); }
-      // busbars
-      g.strokeStyle = 'rgba(205,210,220,0.55)';
-      for (let b = 1; b <= 4; b++) { const bx = x + (cw * b) / 5; g.beginPath(); g.moveTo(bx, y); g.lineTo(bx, y + ch); g.stroke(); }
-    }
-  }
-  const t = tex(c, true);
-  t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
-  return t;
-}
-
 /** Corrugated steel panel normal map (for storage containers). */
 export function corrugatedNormal() {
   const size = 256;
@@ -177,36 +139,4 @@ export function grainTextures(seed = 5, base = [178, 176, 170]) {
     }
   ctx.putImageData(img, 0, 0);
   return { map: tex(c, true), normal: tex(heightToNormal(h, size, 0.8), false) };
-}
-
-/** Screen for the EV charger. */
-export function chargerScreen(percent = 72) {
-  const W = 256, H = 384;
-  const c = canvas(W, H);
-  const g = c.getContext('2d')!;
-  const grd = g.createLinearGradient(0, 0, 0, H);
-  grd.addColorStop(0, '#04110d');
-  grd.addColorStop(1, '#020806');
-  g.fillStyle = grd;
-  g.fillRect(0, 0, W, H);
-  g.fillStyle = '#a0ff75';
-  g.font = '600 30px "Inter Tight Variable", system-ui, sans-serif';
-  g.fillText('nurun', 24, 52);
-  g.fillStyle = 'rgba(255,255,255,0.55)';
-  g.font = '500 15px "Inter Tight Variable", system-ui, sans-serif';
-  g.fillText('CHARGING', 24, 120);
-  g.fillStyle = '#ffffff';
-  g.font = '600 76px "Inter Tight Variable", system-ui, sans-serif';
-  g.fillText(`${percent}%`, 20, 196);
-  g.fillStyle = 'rgba(255,255,255,0.12)';
-  g.fillRect(24, 230, W - 48, 10);
-  g.fillStyle = '#a0ff75';
-  g.fillRect(24, 230, (W - 48) * (percent / 100), 10);
-  g.fillStyle = 'rgba(255,255,255,0.55)';
-  g.font = '500 15px "Inter Tight Variable", system-ui, sans-serif';
-  g.fillText('DC fast charge', 24, 290);
-  g.fillText('Solar share 100%', 24, 316);
-  const t = new THREE.CanvasTexture(c);
-  t.colorSpace = THREE.SRGBColorSpace;
-  return t;
 }

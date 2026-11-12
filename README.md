@@ -38,7 +38,12 @@ Performance: devices with small or touch screens, or 4 or fewer CPU cores, get a
 - **Car**: "Car Concept" by Eric Chadwick, © Darmstadt Graphics Group GmbH, from the Khronos glTF Sample Assets,
   licensed **CC BY 4.0**. Modified: Khronos/3D Commerce logos removed, recoloured, compressed. Attribution is shown in the site footer and must stay.
 - **HDRI**: `venice_sunset_1k.hdr` from Poly Haven (CC0).
-- Everything else (solar modules, trackers, containers, chargers, sand, sky) is procedural.
+- **PV module texture** (`public/textures/pv-module.jpg`): supplied by Nurun (edited reference), baked glare removed.
+- Everything else (trackers, battery containers, transformer/PCS, inverter skid, chargers, carport, sand, sky) is built in code;
+  surface details (doors, signage, fan grilles, screens) are drawn in `lib/equipment.ts`, matched to Nurun's reference sheet.
+
+Model studio: `/studio?m=<model>&v=<view>` renders a single model (`pv-module`, `solar-tracker`, `battery-container`,
+`pcs-transformer`, `ev-charger`, `solar-carport`, `inverter-skid`; views `threequarter`, `front`, `side`, `rear`, `top`).
 
 ## To do before launch
 - Replace the placeholder wordmark (`components/ui/Wordmark.tsx`) with the official Nurun logo SVG.
