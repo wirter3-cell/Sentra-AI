@@ -40,7 +40,8 @@ a:focus-visible{outline:3px solid var(--sky-600);outline-offset:3px}
 
 .paths{max-width:1120px;margin:0 auto;padding:28px 16px 12px;display:grid;grid-template-columns:1fr 1fr;gap:22px}
 .path{background:var(--white);border:1px solid var(--lav-100);border-radius:22px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column}
-.shot{display:block;aspect-ratio:16/10;background:var(--lav-100) center/cover no-repeat;position:relative;text-decoration:none}
+.shot{display:block;aspect-ratio:16/10;background-color:var(--lav-100);position:relative;overflow:hidden;text-decoration:none}
+.shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .badge{position:absolute;top:14px;right:14px;display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.95);color:var(--primary-dark);font-weight:700;font-size:14px;border-radius:999px;padding:4px 12px;box-shadow:0 6px 16px -10px rgba(35,31,61,.5)}
 .play{position:absolute;left:14px;bottom:14px;display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:var(--white);font-weight:700;font-size:14px;border-radius:999px;padding:6px 14px 6px 12px}
 .play svg{width:16px;height:16px;fill:currentColor}
@@ -86,7 +87,8 @@ footer b{color:var(--primary)}
 
   <section class="paths" aria-label="المجالات">
     <article class="path">
-      <a class="shot" href="hajj.html" style="background-image:url('__PREVIEW_HAJJ__')" aria-label="استكشف الحج والعمرة بالـ 3D">
+      <a class="shot" href="hajj.html" aria-label="استكشف الحج والعمرة بالـ 3D">
+        <img src="__PREVIEW_HAJJ__" alt="" width="880" height="550">
         <span class="badge">الحرم والمشاعر</span>
         <span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>تجربة 3D</span>
       </a>
@@ -99,7 +101,8 @@ footer b{color:var(--primary)}
     </article>
 
     <article class="path">
-      <a class="shot" href="alula.html" style="background-image:url('__PREVIEW_ALULA__')" aria-label="استكشف السياحة والرحلات في العُلا بالـ 3D">
+      <a class="shot" href="alula.html" aria-label="استكشف السياحة والرحلات في العُلا بالـ 3D">
+        <img src="__PREVIEW_ALULA__" alt="" width="880" height="550">
         <span class="badge">العُلا</span>
         <span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>تجربة 3D</span>
       </a>
