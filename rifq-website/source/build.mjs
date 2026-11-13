@@ -18,8 +18,9 @@ for (const w of [400, 500, 600, 700]) {
     fonts += block.slice(block.indexOf('@font-face')).trim().replace(/src:[^;]+;/, `src:url(data:font/woff2;base64,${b64}) format('woff2');`) + '\n';
   }
 }
-const img = (f) => 'data:image/webp;base64,' + readFileSync(root + 'assets/' + f).toString('base64');
-const SCREENS = readdirSync(root + 'assets').filter((f) => f.endsWith('.webp') && !f.startsWith('preview-')).sort().map((f) => f.replace('.webp', ''));
+// JPEG everywhere: every browser decodes it (some Safari setups refuse WebP)
+const img = (f) => 'data:image/jpeg;base64,' + readFileSync(root + 'assets/' + f).toString('base64');
+const SCREENS = readdirSync(root + 'assets').filter((f) => f.endsWith('.jpg') && !f.startsWith('preview-')).sort().map((f) => f.replace('.jpg', ''));
 
 async function bundle(entry, banner) {
   const r = await build({ entryPoints: [root + 'src/' + entry], bundle: true, minify: true, format: 'iife', target: 'es2020', write: false, legalComments: 'none' });
@@ -37,7 +38,7 @@ async function page({ template, entry, banner, screens, out, extra = {} }) {
     html = parts.join(val);
   };
   put('/*__FONTS__*/', fonts);
-  if (screens) put('/*__ASSETS__*/', JSON.stringify(Object.fromEntries(screens.map((k) => [k, img(k + '.webp')]))));
+  if (screens) put('/*__ASSETS__*/', JSON.stringify(Object.fromEntries(screens.map((k) => [k, img(k + '.jpg')]))));
   if (entry) put('/*__SCRIPT__*/', await bundle(entry, banner));
   for (const [k, v] of Object.entries(extra)) put(k, v);
   mkdirSync(root + out.replace(/[^/]+$/, ''), { recursive: true });
@@ -49,6 +50,6 @@ await page({ template: 'hajj.html', entry: 'scene.js', banner: THREE_NOTE, scree
 await page({ template: 'alula.html', entry: 'alula.js', banner: THREE_NOTE, screens: ['sos', 'sup-map', 'map', 'emergency'], out: 'dist/site/alula.html' });
 await page({ template: 'register.html', entry: 'register.js', banner: FIREBASE_NOTE, out: 'dist/site/register.html' });
 if (existsSync(root + 'src/index.html')) {
-  const prev = (k) => (existsSync(root + `assets/preview-${k}.webp`) ? img(`preview-${k}.webp`) : '');
+  const prev = (k) => (existsSync(root + `assets/preview-${k}.jpg`) ? img(`preview-${k}.jpg`) : '');
   await page({ template: 'index.html', out: 'dist/site/index.html', extra: { __PREVIEW_HAJJ__: prev('hajj'), __PREVIEW_ALULA__: prev('alula') } });
 }
