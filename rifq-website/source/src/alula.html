@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#5F48A8">
+<title>رِفق — السياحة والرحلات في العُلا</title>
+<meta name="description" content="رِفق للسياحة والرحلات: إدارة المجموعات السياحية في العُلا من الوصول إلى آخر محطة.">
+<style>
+/*__FONTS__*/
+:root{
+  --primary:#5F48A8; --primary-dark:#45357F;
+  --sky:#64B5E8; --sky-600:#3E8FC4; --sky-50:#EEF7FD;
+  --lav-50:#F6F3FC; --lav-100:#E9E3F7; --sand:#D6B98F; --white:#FFFFFF;
+  --ink:#231F3D; --ink-2:#4A4463; --slate:#5C6B82;
+  --success:#0F5D46; --success-50:#E4F1EB;
+  --danger:#E5484D; --danger-ink:#B3272C; --danger-50:#FDEEEE;
+  --warning:#D9771A; --warning-ink:#8A4A05; --warning-50:#FDF3E6;
+  --grad:linear-gradient(135deg,var(--primary) 0%,var(--sky-600) 100%);
+  --cap:min(460px,36vw);
+  --r:22px;
+  --shadow:0 24px 60px -30px rgba(69,53,127,.4);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;font-family:'IBM Plex Sans Arabic',system-ui,sans-serif;color:var(--ink);background:var(--lav-50);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+h1,h2,h3,p,dl,dd{margin:0}
+em{font-style:normal;color:var(--primary)}
+button{font:inherit}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* fixed layers */
+#backdrop{position:fixed;inset:0;z-index:0;background:radial-gradient(120% 90% at 35% 40%,var(--white) 0%,var(--lav-50) 65%)}
+#gl{position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;opacity:0;transition:opacity 1.2s ease}
+#gl.ready{opacity:1}
+#labels{position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+.no-gl #gl,.no-gl #labels{display:none}
+
+/* top bar */
+.top{position:fixed;inset:0 0 auto 0;z-index:10;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px clamp(16px,3vw,40px);background:rgba(255,255,255,.92);box-shadow:0 1px 0 var(--lav-100)}
+.brand{display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none;font-weight:700}
+.mark{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:var(--grad);color:var(--white);font-weight:700;font-size:19px;line-height:1;box-shadow:0 8px 18px -8px rgba(69,53,127,.6)}
+.tools{display:flex;align-items:center;gap:8px}
+.count{font-weight:700;font-size:15px;color:var(--ink-2);min-width:64px;text-align:center;direction:ltr}
+.tbtn{display:grid;place-items:center;width:44px;height:44px;border-radius:14px;border:1px solid var(--lav-100);background:var(--white);color:var(--primary);cursor:pointer}
+.tbtn:hover{background:var(--lav-50)}
+.tbtn:focus-visible{outline:3px solid var(--sky-600);outline-offset:2px}
+.progress{position:fixed;inset:0 0 auto 0;height:4px;z-index:11}
+.progress i{display:block;height:100%;width:0;background:var(--grad)}
+
+/* rail */
+.rail{position:fixed;right:clamp(8px,1.2vw,20px);top:50%;transform:translateY(-50%);z-index:10;display:flex;flex-direction:column;gap:4px}
+.rail button{all:unset;cursor:pointer;display:flex;align-items:center;gap:8px;height:22px}
+.rail button i{width:9px;height:9px;border-radius:50%;background:var(--white);box-shadow:inset 0 0 0 2px var(--primary);transition:transform .2s,background .2s;margin:6px}
+.rail button.on i{background:var(--primary);transform:scale(1.3)}
+.rail button span{font-size:13px;font-weight:600;background:var(--white);border:1px solid var(--lav-100);padding:2px 10px;border-radius:999px;opacity:0;transform:translateX(6px);transition:.2s;white-space:nowrap}
+.rail button:hover span,.rail button:focus-visible span{opacity:1;transform:none}
+
+/* sections + captions */
+main{position:relative;z-index:3;pointer-events:none}
+.sec{min-height:100vh;display:flex;align-items:center;padding:12vh clamp(40px,5vw,72px) 8vh}
+.sec.scrub{display:block;padding:0}
+.pin{position:sticky;top:0;height:100vh;display:flex;align-items:center;padding:10vh clamp(40px,5vw,72px) 6vh}
+.cap{pointer-events:auto;width:var(--cap);background:var(--white);border:1px solid var(--lav-100);border-radius:26px;padding:clamp(20px,2.2vw,30px);box-shadow:var(--shadow)}
+.eyebrow{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:var(--primary);margin-bottom:8px}
+.eyebrow::before{content:"";width:24px;height:2px;background:var(--sand);border-radius:2px}
+h2{font-size:clamp(24px,2.2vw,33px);line-height:1.4;font-weight:700}
+.line{color:var(--ink-2);font-size:16px;margin-top:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--lav-50);color:var(--primary-dark);border-radius:999px;padding:5px 13px;font-size:14px;font-weight:600}
+.nums{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+.nums div{background:var(--lav-50);border-radius:16px;padding:8px 6px;text-align:center}
+.nums b{display:block;font-size:24px;color:var(--primary);line-height:1.2}
+.nums b small{font-size:13px;margin-right:3px}
+.nums span{display:block;font-size:12.5px;color:var(--slate);line-height:1.45}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.stats div{background:var(--lav-50);border-radius:16px;padding:10px 12px}
+.stats b{display:block;font-size:30px;color:var(--primary);line-height:1.15}
+.stats span{font-size:13px;color:var(--slate);line-height:1.45;display:block}
+
+/* steps (SOS story) */
+.steps{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:6px}
+.steps li{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:14px;background:var(--lav-50);color:var(--slate);font-weight:600;font-size:15px;transition:background .3s,color .3s}
+.steps li i{width:12px;height:12px;border-radius:50%;background:var(--lav-100);flex:none;transition:background .3s}
+.steps li.on{color:var(--ink);background:var(--white);box-shadow:inset 0 0 0 1.5px var(--lav-100)}
+.steps li.on[data-k="out"] i{background:var(--warning)}
+.steps li.on[data-k="sos"] i{background:var(--danger)}
+.steps li.on[data-k="sent"] i{background:var(--primary)}
+.steps li.on[data-k="way"] i{background:var(--sky-600)}
+.steps li.on[data-k="done"] i{background:var(--success)}
+
+/* days */
+.days{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:14px}
+.days div{text-align:center;padding:6px 2px;border-radius:14px;transition:background .3s}
+.days b{display:grid;place-items:center;width:38px;height:38px;margin:0 auto 4px;border-radius:50%;border:2px solid var(--primary);color:var(--primary);font-size:14px;background:var(--white)}
+.days .peak b{border-color:var(--danger);color:var(--danger-ink)}
+.days span{font-size:13px;font-weight:600;color:var(--ink-2)}
+.days div.on{background:var(--lav-50)}
+.days div.on b{background:var(--primary);color:var(--white)}
+.days .peak.on b{background:var(--danger);border-color:var(--danger);color:var(--white)}
+.days.five{grid-template-columns:repeat(5,1fr)}
+.days.five b{font-size:15px}
+.daytext{margin-top:10px;min-height:52px;font-size:16px;color:var(--ink);font-weight:600}
+.daytext small{display:inline-block;font-size:12px;font-weight:700;color:var(--danger-ink);background:var(--danger-50);border-radius:999px;padding:0 8px;margin-right:6px}
+
+/* details */
+details{margin-top:12px;border:1px solid var(--lav-100);border-radius:16px;background:var(--white)}
+summary{cursor:pointer;list-style:none;padding:10px 14px;font-weight:700;font-size:15px;color:var(--primary);display:flex;justify-content:space-between;align-items:center;min-height:44px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-size:20px;line-height:1}
+details[open] summary::after{content:"−"}
+details>div{padding:0 14px 12px;max-height:46vh;overflow:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{color:var(--primary-dark);font-weight:700;padding:6px 4px;text-align:center;border-bottom:1px solid var(--lav-100)}
+.tbl th:first-child,.tbl td:first-child{text-align:right}
+.tbl td{padding:6px 4px;text-align:center;border-bottom:1px solid var(--lav-50);font-weight:600}
+.yes{color:var(--success);display:inline-flex;align-items:center;gap:3px;font-size:12.5px}
+.yes .ic{width:16px;height:16px;stroke-width:2.6}
+.no{color:var(--slate)}
+.note{font-size:12.5px;color:var(--slate)}
+.list{list-style:none;margin:0;padding:0;columns:2;column-gap:14px}
+.list li{font-size:14px;padding:3px 0;display:flex;gap:6px;break-inside:avoid}
+.list li .ic{width:16px;height:16px;color:var(--success);margin-top:4px;stroke-width:2.4}
+.pk{display:grid;gap:8px;margin-top:12px}
+.pk details{margin:0}
+.pk summary{color:var(--ink)}
+.pk summary span{display:flex;align-items:center;gap:8px}
+.pk summary .ic{color:var(--primary)}
+
+.privacy{background:var(--grad);color:var(--white);border-radius:18px;padding:14px 16px;margin-top:14px}
+.privacy b{font-size:16px;display:block;margin-bottom:4px}
+.privacy li{font-size:14.5px;font-weight:600;line-height:1.65;padding:2px 0}
+.privacy ul{margin:0;padding:0 18px 0 0}
+.info{background:var(--sky-50);color:var(--ink);border-radius:14px;padding:10px 14px;font-size:14.5px;margin-top:12px;font-weight:500}
+.dots{display:flex;gap:6px;margin-top:14px;flex-wrap:wrap}
+.dots i{width:26px;height:26px;border-radius:8px;box-shadow:inset 0 0 0 1px rgba(35,31,61,.08)}
+
+/* hero */
+.hero .cap{padding:clamp(22px,2.4vw,34px)}
+.logo-row{display:flex;align-items:center;gap:14px}
+.mark.xl{width:84px;height:84px;border-radius:24px;font-size:36px}
+.wm{font-size:44px;font-weight:700;line-height:1.15;color:var(--primary-dark)}
+.tag{font-size:17px;font-weight:600;color:var(--ink-2)}
+.hero h1{font-size:clamp(20px,1.7vw,25px);line-height:1.6;font-weight:700;margin-top:16px}
+.hero h1 span{color:var(--primary)}
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-top:16px;padding-top:14px;border-top:1px solid var(--lav-100)}
+.meta dt{font-size:12.5px;color:var(--slate);font-weight:600}
+.meta dd{font-size:14.5px;font-weight:700;line-height:1.5}
+.hint{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:14px;font-size:13.5px;color:var(--slate);font-weight:600}
+.hint kbd{font-family:inherit;font-size:12px;border:1px solid var(--lav-100);border-bottom-width:2px;border-radius:6px;padding:0 6px;color:var(--ink-2);background:var(--white)}
+
+/* entity / price */
+.band{background:var(--grad);color:var(--white);border-radius:18px;padding:16px 18px;margin-top:4px}
+.band span{font-size:14px;font-weight:600}
+.band b{display:block;font-size:21px;line-height:1.45}
+.ent{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.ent div{border:1px solid var(--lav-100);border-radius:14px;padding:8px 12px}
+.ent span{font-size:12.5px;color:var(--slate);font-weight:600}
+.ent b{display:block;font-size:19px}
+.price{display:flex;align-items:baseline;gap:8px;margin-top:10px}
+.price b{font-size:64px;line-height:1;color:var(--primary)}
+.price span{font-size:20px;font-weight:700;color:var(--primary-dark)}
+
+footer{position:relative;z-index:3;text-align:center;padding:30px 16px 46px;font-size:14px;color:var(--slate);font-weight:600}
+footer b{color:var(--primary)}
+
+/* 3D labels */
+.lbl{position:absolute;left:0;top:0;will-change:transform,opacity;opacity:0;white-space:nowrap}
+.lbl>div{transform:translate(-50%,-100%);margin-top:-10px;background:var(--white);border:1px solid var(--lav-100);border-radius:14px;padding:5px 11px;box-shadow:0 10px 26px -14px rgba(35,31,61,.5);font-size:14px;line-height:1.5;text-align:center}
+.lbl b{font-weight:700;font-size:14.5px;color:var(--ink)}
+.lbl span{display:block;font-size:12.5px;color:var(--slate);font-weight:500}
+.lbl .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-left:6px}
+.lbl .num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;border:2px solid var(--primary);color:var(--primary);font-weight:700;font-size:12px;margin-left:6px;vertical-align:middle;background:var(--white)}
+.lbl .num.peak{background:var(--danger);border-color:var(--danger);color:var(--white)}
+.lbl .st{display:inline-block;font-style:normal;font-size:12px;font-weight:700;border-radius:999px;padding:0 8px;margin-top:2px}
+.lbl .st.ok{background:var(--success-50);color:var(--success)}
+.lbl .st.out{background:var(--warning-50);color:var(--warning-ink)}
+.lbl .st.sos{background:var(--danger-50);color:var(--danger-ink)}
+.lbl .st.info{background:var(--lav-50);color:var(--primary-dark)}
+.lbl.place>div{background:rgba(255,255,255,.92);border-color:transparent;padding:3px 10px;box-shadow:0 6px 16px -10px rgba(35,31,61,.5)}
+.lbl.place b{font-size:15px;color:var(--primary-dark)}
+.lbl.grad>div{background:var(--grad);border:0}
+.lbl.grad b,.lbl.grad span{color:var(--white)}
+.lbl.under>div{transform:translate(-50%,0);margin-top:10px}
+.lbl.flat>div{transform:translate(-50%,-50%);margin:0}
+
+.vs{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:8px}
+.vs li{background:var(--lav-50);border-radius:14px;padding:9px 13px}
+.vs b{display:block;font-size:15.5px;color:var(--ink)}
+.vs span{display:block;font-size:14px;color:var(--ink-2);line-height:1.6}
+.steps.near li{align-items:flex-start}
+.steps.near li i{margin-top:8px}
+.steps.near li b{display:block;font-size:15px}
+.steps.near li span{display:none;font-size:14px;color:var(--ink-2);font-weight:500;line-height:1.6;margin-top:2px}
+.steps.near li.on span{display:block}
+.steps.near li.on i{background:var(--primary)}
+.calc{margin-top:14px;background:var(--lav-50);border-radius:18px;padding:12px 14px}
+.calc label{font-size:14px;font-weight:700;color:var(--primary-dark)}
+.calc-row{display:flex;align-items:center;gap:10px;margin-top:6px;flex-wrap:wrap}
+.calc input{width:130px;height:48px;border:1.5px solid var(--lav-100);border-radius:14px;padding:0 12px;font:inherit;font-size:18px;font-weight:700;color:var(--ink);background:var(--white);direction:ltr;text-align:center}
+.calc input:focus{outline:3px solid var(--sky-600);outline-offset:1px}
+.calc-row span{font-size:15px;color:var(--ink-2);font-weight:600}
+.calc output{display:block;margin-top:6px;font-size:22px;font-weight:700;color:var(--primary)}
+.navlinks{display:flex;align-items:center;gap:8px;margin-inline-start:8px}
+.navlinks a{display:inline-flex;align-items:center;height:44px;padding:0 14px;border-radius:14px;font-weight:700;font-size:15px;text-decoration:none}
+.navlinks .home{color:var(--primary);border:1px solid var(--lav-100);background:var(--white)}
+.navlinks .reg{background:var(--primary);color:var(--white)}
+.navlinks a:focus-visible{outline:3px solid var(--sky-600);outline-offset:2px}
+.ctas{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.cta{display:inline-flex;align-items:center;justify-content:center;height:54px;padding:0 22px;border-radius:16px;font-weight:700;font-size:16px;text-decoration:none}
+.cta.p{background:var(--primary);color:var(--white)}
+.cta.p:active{background:var(--primary-dark)}
+.cta.s{border:2px solid var(--primary);color:var(--primary);background:var(--white)}
+.cta:focus-visible{outline:3px solid var(--sky-600);outline-offset:2px}
+@media (max-width:820px){.navlinks .home{display:none}.navlinks a{padding:0 12px;font-size:14px}}
+.intro{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:radial-gradient(120% 90% at 50% 40%,var(--white) 0%,var(--lav-50) 70%);transition:opacity .9s ease,visibility .9s}
+.intro-in{display:grid;justify-items:center;gap:14px}
+.intro .mark{width:96px;height:96px;border-radius:28px;font-size:40px;animation:breathe 2.4s ease-in-out infinite}
+.intro p{font-size:18px;font-weight:600;color:var(--ink-2)}
+.intro .bar{display:block;width:160px;height:4px;border-radius:4px;background:var(--lav-100);overflow:hidden}
+.intro .bar b{display:block;height:100%;width:40%;background:var(--grad);border-radius:4px;animation:slide 1.3s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.05)}}
+@keyframes slide{0%{transform:translateX(170px)}100%{transform:translateX(-170px)}}
+.ready .intro{opacity:0;visibility:hidden}
+.rv{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
+
+@media (max-width:1100px){:root{--cap:min(420px,44vw)}}
+@media (max-width:820px){
+  :root{--cap:100%}
+  .sec{align-items:flex-end;padding:56vh 12px 4vh}
+  .pin{align-items:flex-end;padding:0 12px 3vh}
+  .cap{border-radius:22px;padding:16px 16px 14px}
+  h2{font-size:22px}
+  .rail,.count{display:none}
+  .top .brand span:last-child{display:none}
+  .nums{grid-template-columns:repeat(2,1fr)}
+  .stats b{font-size:24px}
+  .days b{width:32px;height:32px;font-size:12px}
+  .days span{font-size:11.5px}
+  .daytext{min-height:44px;font-size:14.5px}
+  .steps li{padding:6px 10px;font-size:14px}
+  .list{columns:1}
+  .hero h1{font-size:18px}
+  .hint{display:none}
+  .mark.xl{width:64px;height:64px;font-size:28px;border-radius:18px}
+  .wm{font-size:34px}
+  .lbl>div{font-size:12px;padding:3px 8px}
+  .lbl b{font-size:12.5px}
+  .lbl span:not(.num),.lbl.desk{display:none}
+  .vs span{display:none}
+  .vs li{padding:7px 12px}
+  .lbl .num{width:20px;height:20px;font-size:10.5px}
+  .price b{font-size:48px}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.rv{transition:none;opacity:1;transform:none}.intro .mark,.intro .bar b{animation:none}}
+</style>
+</head>
+<body data-mode="site">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 14.2c2.6.3 4.5 2.6 4.5 5.3"/></symbol>
+  <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18.5a4.5 4.5 0 0 1-.6-9A6 6 0 0 1 18 8.6a4.5 4.5 0 0 1-.5 9.9z"/></symbol>
+  <symbol id="i-full" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+</svg>
+
+<div class="intro" aria-hidden="true"><div class="intro-in"><span class="mark">رِفق</span><p>تقنية تعتني بكم</p><i class="bar"><b></b></i></div></div>
+<div id="backdrop"></div>
+<canvas id="gl" aria-hidden="true"></canvas>
+<div id="labels" aria-hidden="true"></div>
+
+<div class="progress"><i></i></div>
+<header class="top">
+  <div style="display:flex;align-items:center"><a class="brand" href="#hero"><span class="mark">رِفق</span><span>رِفق · تقنية تعتني بكم</span></a>
+  <nav class="navlinks" aria-label="روابط الموقع"><a class="home" href="index.html">الرئيسية</a><a class="reg" href="register.html?sector=tourism">سجّل منشأتك</a></nav></div>
+  <div class="tools">
+    <button class="tbtn" id="prev" type="button" aria-label="القسم السابق"><svg class="ic"><use href="#i-up"/></svg></button>
+    <span class="count" id="count">1 / 13</span>
+    <button class="tbtn" id="next" type="button" aria-label="القسم التالي"><svg class="ic"><use href="#i-down"/></svg></button>
+    <button class="tbtn" id="fs" type="button" aria-label="ملء الشاشة"><svg class="ic"><use href="#i-full"/></svg></button>
+  </div>
+</header>
+<nav class="rail" aria-label="أقسام الصفحة"></nav>
+
+<main>
+<section class="sec hero" id="hero" data-title="الغلاف">
+  <div class="cap rv">
+    <p class="eyebrow">رِفق للسياحة والرحلات</p>
+    <div class="logo-row"><span class="mark xl">رِفق</span><div><div class="wm">رِفق</div><div class="tag">تقنية تعتني بكم</div></div></div>
+    <h1>إدارة المجموعات السياحية في العُلا <span>— من الوصول إلى آخر محطة</span></h1>
+    <div class="ctas"><a class="cta p" href="register.html?sector=tourism">سجّل منشأتك</a><a class="cta s" href="hajj.html">الحج والعمرة</a></div>
+    <p class="hint">للتنقل: مرّر، أو استخدم <kbd>↓</kbd> <kbd>↑</kbd> أو <kbd>مسافة</kbd></p>
+  </div>
+</section>
+
+<section class="sec" id="group" data-title="رؤية لحظية">
+  <div class="cap rv">
+    <p class="eyebrow">رؤية لحظية</p>
+    <h2>كل سائح في مجموعتك، <em>تعرف مكانه</em> في أي لحظة.</h2>
+    <div class="stats">
+      <div><b>3</b><span>واجهات · مصدر حقيقة واحد</span></div>
+      <div><b>4</b><span>مستويات صلاحيات</span></div>
+      <div><b>100%</b><span>عربي بالكامل</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec scrub" id="sos" data-title="استغاثة لا تفشل" data-steps="5" style="height:420vh">
+  <div class="pin">
+    <div class="cap rv">
+      <p class="eyebrow">استغاثة لا تفشل</p>
+      <h2>زر واحد يصل للمرشد وغرفة العمليات <em>خلال ثوانٍ.</em></h2>
+      <ol class="steps" id="sos-steps">
+        <li data-k="out"><i></i>خرج من نطاق المجموعة — بعد قراءتين متتاليتين</li>
+        <li data-k="sos"><i></i>ضغط زر الاستغاثة — تأكيد واحد فقط</li>
+        <li data-k="sent"><i></i>أُرسل · استُلم عند المرشد وغرفة العمليات</li>
+        <li data-k="way"><i></i>المرشد في الطريق</li>
+        <li data-k="done"><i></i>تم الوصول</li>
+      </ol>
+      <div class="nums">
+        <div><b>10<small>أمتار</small></b><span>تحديث مع كل حركة</span></div>
+        <div><b>45<small>ثانية</small></b><span>أقصى مدة بين تحديثين</span></div>
+        <div><b>3<small>دقائق</small></b><span>حد «متصل» الواضح</span></div>
+        <div><b>1<small>تأكيد</small></b><span>لإرسال الاستغاثة</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec scrub" id="days" data-title="برنامج الرحلة" data-steps="6" style="height:460vh">
+  <div class="pin">
+    <div class="cap rv">
+      <p class="eyebrow">برنامج الرحلة</p>
+      <h2>يوم في العُلا، <em>محطة بمحطة.</em></h2>
+      <div class="days five" id="day-chips">
+        <div><b>1</b><span>البلدة القديمة</span></div>
+        <div><b>2</b><span>دادان وعِكمة</span></div>
+        <div><b>3</b><span>جبل الفيل</span></div>
+        <div><b>4</b><span>الحِجر</span></div>
+        <div><b>5</b><span>مرايا</span></div>
+      </div>
+      <p class="daytext" id="day-text">المجموعة على الخريطة من أول محطة إلى آخرها.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec scrub" id="why" data-title="الحلول المعتادة" data-steps="2" style="height:220vh">
+  <div class="pin">
+    <div class="cap rv">
+      <p class="eyebrow">لماذا رِفق؟</p>
+      <h2>لماذا لا تكفي <em>الحلول المعتادة؟</em></h2>
+      <ul class="vs">
+        <li><b>مجموعات الواتساب</b><span>رسائل كثيرة، ولا موقع، ولا تنبيه حين يبتعد أحد.</span></li>
+        <li><b>التفقد اليدوي</b><span>النداء بالأسماء يؤخر التحرك، ولا يكشف من تأخر إلا بعد فوات الوقت.</span></li>
+        <li><b>الاتصالات المتكررة</b><span>«وينك؟» عشرات المرات في اليوم، وخطوط مشغولة وقت الزحام.</span></li>
+      </ul>
+      <p class="info"><b>مع رِفق:</b> كل المجموعات على خريطة واحدة، مع تنبيه فوري لأي خروج من النطاق.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec scrub" id="principles" data-title="المبادئ" data-steps="4" style="height:420vh">
+  <div class="pin">
+    <div class="cap rv">
+      <p class="eyebrow">مبادئ بُني عليها رِفق</p>
+      <h2>تقنية تعمل <em>في الميدان.</em></h2>
+      <ol class="steps near" id="pr-steps">
+        <li><i></i><div><b>البطارية أولاً</b><span>الموقع يُرسل عند الحركة 10 أمتار أو كل 45 ثانية كحد أقصى — دقة كافية بدون استنزاف الجوال.</span></div></li>
+        <li><i></i><div><b>لا إنذارات كاذبة</b><span>«خارج النطاق» لا يُعلن إلا بعد قراءتين متتاليتين، مع هامش يتكيّف مع دقة GPS.</span></div></li>
+        <li><i></i><div><b>يعمل مع شبكة ضعيفة</b><span>الاستغاثة تُرسل حتى بدون موقع، والحالة «متصل» تعني آخر تحديث خلال 3 دقائق.</span></div></li>
+        <li><i></i><div><b>سهل لكل الأعمار</b><span>خط كبير، أزرار بارتفاع 54، عربي بالكامل، ومعنى كل حالة بأيقونة ونص لا باللون وحده.</span></div></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="how" data-title="كيف يعمل">
+  <div class="cap rv">
+    <p class="eyebrow">كيف يعمل</p>
+    <h2>ثلاث واجهات، <em>مصدر حقيقة واحد.</em></h2>
+    <p class="line">الصلاحيات تُطبّق في سحابة رِفق قبل أن يصل أي تحديث لأي شاشة.</p>
+  </div>
+</section>
+
+<section class="sec" id="roles" data-title="الصلاحيات">
+  <div class="cap rv">
+    <p class="eyebrow">الهيكل الهرمي</p>
+    <h2>كل شخص يرى <em>ما يخصه فقط.</em></h2>
+    <p class="line">الصلاحيات تُمنح من الخادم فقط، ولا يستطيع أحد رفع صلاحيته بنفسه.</p>
+  </div>
+</section>
+
+<section class="sec" id="tourist" data-title="تطبيق السائح">
+  <div class="cap rv">
+    <p class="eyebrow">المنصة الأولى</p>
+    <h2>تطبيق السائح: <em>رحلته في جيبه.</em></h2>
+    <div class="chips"><span class="chip">رحلتي محطة بمحطة</span><span class="chip">هويتي الرقمية</span><span class="chip">خريطتي</span><span class="chip">زر الاستغاثة</span><span class="chip">تنبيهات بلغة واضحة</span></div>
+  </div>
+</section>
+
+<section class="sec" id="guide" data-title="تطبيق المرشد">
+  <div class="cap rv">
+    <p class="eyebrow">المنصة الثانية</p>
+    <h2>تطبيق المرشد: <em>مجموعته أمامه.</em></h2>
+    <p class="line">تطبيق واحد، تتغيّر شاشاته حسب الدور: المشرف · المرشد · منسّق النقل.</p>
+  </div>
+</section>
+
+<section class="sec scrub" id="bus" data-title="التفقد بالباركود" data-steps="3" style="height:320vh">
+  <div class="pin">
+    <div class="cap rv">
+      <p class="eyebrow">الحافلة والحضور</p>
+      <h2>التفقد بالباركود <em>بدل النداء بالأسماء.</em></h2>
+      <ol class="steps near" id="bus-steps">
+        <li><i></i><div><b>مسح الهوية الرقمية عند الباب</b><span>كل سائح يعرض باركوده، والعدد يتحدّث لحظياً.</span></div></li>
+        <li><i></i><div><b>تنبيه «يحتاج مرافقاً» عند التحرك</b><span>الاحتياجات الخاصة معروفة قبل أن تُطلب.</span></div></li>
+        <li><i></i><div><b>من لم يصل بعد: بالاسم والمسافة</b><span>بدل البحث العشوائي والاتصالات المتكررة.</span></div></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="ops" data-title="غرفة العمليات">
+  <div class="cap rv">
+    <p class="eyebrow">المنصة الثالثة</p>
+    <h2>غرفة العمليات: <em>كل الرحلات</em> في شاشة.</h2>
+    <div class="privacy">
+      <b>الخصوصية ليست ميزة إضافية — هي الأساس</b>
+      <ul>
+        <li>السائح لا يرى إلا نفسه ومجموعته.</li>
+        <li>التفاصيل الطبية للمشرف والمدير، والاحتياجات الخاصة للمرشد.</li>
+        <li>صلاحيات على مستوى الخادم، وسجل تدقيق لكل إجراء.</li>
+        <li>موافقة صريحة من السائح، والتزام بنظام حماية البيانات الشخصية.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="register" data-title="التسجيل">
+  <div class="cap rv">
+    <p class="eyebrow">انضم إلى رِفق</p>
+    <h2>سجّل منشأتك السياحية <em>وابدأ مع رِفق.</em></h2>
+    <p class="line">تطبيق السائح، تطبيق المرشد، غرفة العمليات، والسيرفرات وقاعدة البيانات — في منظومة واحدة.</p>
+    <div class="ctas"><a class="cta p" href="register.html?sector=tourism">سجّل منشأتك</a><a class="cta s" href="hajj.html">الحج والعمرة</a></div>
+  </div>
+</section>
+</main>
+
+<footer><b>رِفق</b> — تقنية تعتني بكم · <a href="index.html" style="color:inherit">الرئيسية</a> · <a href="register.html?sector=tourism" style="color:inherit">التسجيل</a></footer>
+
+<script id="assets" type="application/json">/*__ASSETS__*/</script>
+<script>/*__SCRIPT__*/</script>
+</body>
+</html>

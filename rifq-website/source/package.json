@@ -1,0 +1,16 @@
+{
+  "name": "rifq-site",
+  "version": "1.0.0",
+  "description": "رِفق — موقع التسجيل وتجارب الـ 3D",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@fontsource/ibm-plex-sans-arabic": "^5.3.0",
+    "esbuild": "^0.28.2",
+    "firebase": "^11.10.0",
+    "three": "^0.187.0"
+  },
+  "private": true
+}

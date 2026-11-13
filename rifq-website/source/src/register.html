@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#5F48A8">
+<title>سجّل منشأتك — رِفق</title>
+<meta name="description" content="سجّل حملتك أو شركتك السياحية في رِفق: منظومة متكاملة لتتبع المجموعات وإدارتها.">
+<style>
+/*__FONTS__*/
+:root{
+  --primary:#5F48A8; --primary-dark:#45357F;
+  --sky:#64B5E8; --sky-600:#3E8FC4; --sky-50:#EEF7FD;
+  --lav-50:#F6F3FC; --lav-100:#E9E3F7; --sand:#D6B98F; --white:#FFFFFF;
+  --ink:#231F3D; --ink-2:#4A4463; --slate:#5C6B82;
+  --success:#0F5D46; --success-50:#E4F1EB;
+  --danger:#E5484D; --danger-ink:#B3272C; --danger-50:#FDEEEE;
+  --grad:linear-gradient(135deg,var(--primary) 0%,var(--sky-600) 100%);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'IBM Plex Sans Arabic',system-ui,sans-serif;color:var(--ink);background:var(--lav-50);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+h1,h2,h3,p{margin:0}
+a{color:var(--primary)}
+.top{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px clamp(16px,3vw,40px);background:rgba(255,255,255,.96);box-shadow:0 1px 0 var(--lav-100)}
+.brand{display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none;font-weight:700}
+.mark{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:var(--grad);color:var(--white);font-weight:700;font-size:19px;line-height:1}
+.top nav{display:flex;gap:8px}
+.top nav a{display:inline-flex;align-items:center;height:44px;padding:0 14px;border-radius:14px;font-weight:700;font-size:15px;text-decoration:none;border:1px solid var(--lav-100);background:var(--white)}
+.top nav a:focus-visible,.seg button:focus-visible,.btn:focus-visible,.chk:focus-within{outline:3px solid var(--sky-600);outline-offset:2px}
+
+main{max-width:780px;margin:0 auto;padding:28px 16px 64px}
+.hero{background:var(--grad);color:var(--white);border-radius:26px;padding:26px 26px 22px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;left:-70px;top:-60px;width:240px;height:240px;border-radius:50%;border:28px solid rgba(255,255,255,.07)}
+.hero h1{font-size:clamp(26px,3.4vw,34px);line-height:1.35}
+.hero p{font-size:17px;font-weight:600;margin-top:6px;position:relative;z-index:1}
+
+.card{background:var(--white);border:1px solid var(--lav-100);border-radius:22px;padding:20px clamp(16px,3vw,26px);margin-top:16px}
+.card h2{font-size:20px;color:var(--primary-dark);display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.card h2 span{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--lav-50);color:var(--primary);font-size:15px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.seg button{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:2px;padding:14px 16px;border-radius:18px;border:2px solid var(--lav-100);background:var(--white);min-height:54px}
+.seg button b{font-size:17px}
+.seg button small{font-size:14px;color:var(--slate)}
+.seg button[aria-pressed="true"]{border-color:var(--primary);background:var(--lav-50)}
+.seg button[aria-pressed="true"] b{color:var(--primary-dark)}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
+.full{grid-column:1/-1}
+.f label,.f .lab{display:block;font-weight:700;font-size:15px;margin-bottom:4px}
+.f label i,.f .lab i{font-style:normal;color:var(--danger-ink)}
+.f .hint{font-size:13.5px;color:var(--slate);margin-top:3px}
+.f input,.f select,.f textarea{width:100%;min-height:50px;border:1.5px solid var(--lav-100);border-radius:14px;padding:10px 14px;font:inherit;font-size:16px;color:var(--ink);background:var(--white)}
+.f textarea{min-height:96px;resize:vertical}
+.f input:focus,.f select:focus,.f textarea:focus{outline:3px solid var(--sky-600);outline-offset:1px;border-color:var(--sky-600)}
+.f input[dir="ltr"]{text-align:right}
+.f.bad input,.f.bad select,.f.bad textarea{border-color:var(--danger)}
+.f .err{display:none;font-size:14px;font-weight:600;color:var(--danger-ink);margin-top:4px}
+.f.bad .err{display:block}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.chk{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:6px 14px;border:1.5px solid var(--lav-100);border-radius:14px;background:var(--white);cursor:pointer;font-weight:600;font-size:15px}
+.chk input{width:20px;height:20px;accent-color:var(--primary);margin:0}
+.chk:has(input:checked){border-color:var(--primary);background:var(--lav-50)}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:15px}
+.consent input{width:22px;height:22px;accent-color:var(--primary);margin-top:3px;flex:none}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:56px;border:0;border-radius:16px;background:var(--primary);color:var(--white);font:inherit;font-weight:700;font-size:17px;cursor:pointer;margin-top:18px}
+.btn:active{background:var(--primary-dark)}
+.btn[disabled]{opacity:.7;cursor:progress}
+.note{font-size:14px;color:var(--slate);margin-top:10px;text-align:center}
+.alert{display:none;background:var(--danger-50);color:var(--danger-ink);border-radius:14px;padding:12px 14px;font-weight:600;margin-top:14px}
+.alert.on{display:block}
+.done{display:none;text-align:center}
+.done.on{display:block}
+.done .ok{display:grid;place-items:center;width:72px;height:72px;border-radius:50%;background:var(--success-50);color:var(--success);margin:6px auto 12px}
+.done h2{justify-content:center;font-size:24px;color:var(--ink)}
+.done .ref{display:inline-block;margin-top:10px;padding:6px 16px;border-radius:999px;background:var(--lav-50);font-weight:700;color:var(--primary-dark);direction:ltr}
+.done .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.done .row a{display:inline-flex;align-items:center;height:54px;padding:0 22px;border-radius:16px;font-weight:700;text-decoration:none;border:2px solid var(--primary)}
+.done .row a.p{background:var(--primary);color:var(--white)}
+[hidden]{display:none!important}
+footer{text-align:center;padding:10px 16px 40px;font-size:14px;color:var(--slate);font-weight:600}
+@media (max-width:640px){.grid,.seg{grid-template-columns:1fr}.top nav a.home{display:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+<header class="top">
+  <a class="brand" href="index.html"><span class="mark">رِفق</span><span>رِفق · تقنية تعتني بكم</span></a>
+  <nav aria-label="روابط الموقع"><a class="home" href="index.html">الرئيسية</a><a id="explore" href="hajj.html">استكشف</a></nav>
+</header>
+
+<main>
+  <div class="hero">
+    <h1>سجّل منشأتك في رِفق</h1>
+    <p>بيانات منشأتك والمسؤول عنها وحجم تشغيلك — ويتواصل معك فريق رِفق.</p>
+  </div>
+
+  <form id="reg" novalidate>
+    <section class="card" aria-labelledby="s0">
+      <h2 id="s0"><span>1</span>مجال المنشأة</h2>
+      <div class="seg" role="group" aria-label="مجال المنشأة">
+        <button type="button" data-sector="hajj" aria-pressed="true"><b>الحج والعمرة</b><small>حملات الحج وشركات العمرة</small></button>
+        <button type="button" data-sector="tourism" aria-pressed="false"><b>السياحة والرحلات</b><small>منظمو الرحلات ووكالات السياحة</small></button>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="s1">
+      <h2 id="s1"><span>2</span>بيانات المنشأة</h2>
+      <div class="grid">
+        <div class="f full"><label for="eName">اسم المنشأة <i>*</i></label><input id="eName" name="eName" required minlength="2" maxlength="150" autocomplete="organization"><p class="err">اكتب اسم المنشأة.</p></div>
+        <div class="f"><label for="eType">نوع الكيان <i>*</i></label>
+          <select id="eType" name="eType" required><option value="">اختر</option><option>مؤسسة</option><option>شركة</option><option>جمعية</option><option>جهة حكومية</option><option>أخرى</option></select><p class="err">اختر نوع الكيان.</p></div>
+        <div class="f"><label for="eNum">الرقم الوطني الموحد أو السجل التجاري <i>*</i></label><input id="eNum" name="eNum" required inputmode="numeric" dir="ltr" maxlength="14" placeholder="7xxxxxxxxx"><p class="hint">10 أرقام</p><p class="err">الرقم يتكوّن من 10 أرقام.</p></div>
+        <div class="f"><label for="eLic" id="eLicLab">رقم ترخيص وزارة الحج والعمرة</label><input id="eLic" name="eLic" maxlength="40" dir="ltr"><p class="hint">اختياري</p></div>
+        <div class="f"><label for="eCity">المدينة <i>*</i></label>
+          <select id="eCity" name="eCity" required><option value="">اختر</option><option>مكة المكرمة</option><option>المدينة المنورة</option><option>الرياض</option><option>جدة</option><option>الدمام</option><option>العُلا</option><option>أخرى</option></select><p class="err">اختر المدينة.</p></div>
+        <div class="f full"><label for="eAddr">العنوان الوطني</label><input id="eAddr" name="eAddr" maxlength="200" autocomplete="street-address"><p class="hint">اختياري</p></div>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="s2">
+      <h2 id="s2"><span>3</span>المسؤول عن التسجيل</h2>
+      <div class="grid">
+        <div class="f"><label for="cName">الاسم الكامل <i>*</i></label><input id="cName" name="cName" required minlength="3" maxlength="100" autocomplete="name"><p class="err">اكتب الاسم الكامل.</p></div>
+        <div class="f"><label for="cTitle">المنصب <i>*</i></label><input id="cTitle" name="cTitle" required minlength="2" maxlength="80" autocomplete="organization-title"><p class="err">اكتب المنصب.</p></div>
+        <div class="f"><label for="cPhone">رقم الجوال <i>*</i></label><input id="cPhone" name="cPhone" required inputmode="tel" dir="ltr" maxlength="16" placeholder="05xxxxxxxx" autocomplete="tel"><p class="err">اكتب رقم جوال سعودي يبدأ بـ 05 (10 أرقام).</p></div>
+        <div class="f"><label for="cEmail">البريد الإلكتروني <i>*</i></label><input id="cEmail" name="cEmail" type="email" required dir="ltr" maxlength="120" autocomplete="email"><p class="err">اكتب بريدًا إلكترونيًا صحيحًا.</p></div>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="s3" data-for="hajj">
+      <h2 id="s3"><span>4</span>حجم التشغيل</h2>
+      <div class="grid">
+        <div class="f full"><span class="lab" id="hSvcLab">نوع الخدمة <i>*</i></span>
+          <div class="opts" role="group" aria-labelledby="hSvcLab" data-req="1" id="hSvc">
+            <label class="chk"><input type="checkbox" value="حج — حجاج الداخل">حج — حجاج الداخل</label>
+            <label class="chk"><input type="checkbox" value="حج — حجاج الخارج">حج — حجاج الخارج</label>
+            <label class="chk"><input type="checkbox" value="عمرة">عمرة</label>
+          </div><p class="err">اختر نوع خدمة واحد على الأقل.</p></div>
+        <div class="f"><label for="hCount">العدد المتوقع للحجاج والمعتمرين <i>*</i></label><input id="hCount" type="number" min="1" max="1000000" required inputmode="numeric" dir="ltr"><p class="err">اكتب العدد المتوقع.</p></div>
+        <div class="f"><label for="hGroups">عدد المجموعات</label><input id="hGroups" type="number" min="0" max="100000" inputmode="numeric" dir="ltr"><p class="hint">اختياري</p></div>
+        <div class="f"><label for="hStaff">عدد المشرفين والمفوجين والمرشدين</label><input id="hStaff" type="number" min="0" max="100000" inputmode="numeric" dir="ltr"><p class="hint">اختياري</p></div>
+        <div class="f"><label for="hSeason">الموسم المستهدف <i>*</i></label>
+          <select id="hSeason" required><option value="">اختر</option><option>موسم حج 1448هـ</option><option>العمرة على مدار العام</option><option>الحج والعمرة</option></select><p class="err">اختر الموسم.</p></div>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="s3t" data-for="tourism" hidden>
+      <h2 id="s3t"><span>4</span>حجم التشغيل</h2>
+      <div class="grid">
+        <div class="f full"><span class="lab" id="tActLab">نوع النشاط <i>*</i></span>
+          <div class="opts" role="group" aria-labelledby="tActLab" data-req="1" id="tAct">
+            <label class="chk"><input type="checkbox" value="منظّم رحلات">منظّم رحلات</label>
+            <label class="chk"><input type="checkbox" value="وكالة سفر وسياحة">وكالة سفر وسياحة</label>
+            <label class="chk"><input type="checkbox" value="مرشد سياحي مرخّص">مرشد سياحي مرخّص</label>
+            <label class="chk"><input type="checkbox" value="نقل سياحي">نقل سياحي</label>
+            <label class="chk"><input type="checkbox" value="فندق أو منتجع">فندق أو منتجع</label>
+          </div><p class="err">اختر نشاطًا واحدًا على الأقل.</p></div>
+        <div class="f full"><span class="lab" id="tDestLab">الوجهات <i>*</i></span>
+          <div class="opts" role="group" aria-labelledby="tDestLab" data-req="1" id="tDest">
+            <label class="chk"><input type="checkbox" value="العُلا" checked>العُلا</label>
+            <label class="chk"><input type="checkbox" value="الدرعية">الدرعية</label>
+            <label class="chk"><input type="checkbox" value="الرياض">الرياض</label>
+            <label class="chk"><input type="checkbox" value="جدة">جدة</label>
+            <label class="chk"><input type="checkbox" value="أبها">أبها</label>
+            <label class="chk"><input type="checkbox" value="أخرى">أخرى</label>
+          </div><p class="err">اختر وجهة واحدة على الأقل.</p></div>
+        <div class="f"><label for="tCount">العدد الشهري المتوقع للسياح <i>*</i></label><input id="tCount" type="number" min="1" max="1000000" required inputmode="numeric" dir="ltr"><p class="err">اكتب العدد المتوقع.</p></div>
+        <div class="f"><label for="tTrips">عدد الرحلات الشهرية</label><input id="tTrips" type="number" min="0" max="100000" inputmode="numeric" dir="ltr"><p class="hint">اختياري</p></div>
+        <div class="f"><label for="tGuides">عدد المرشدين</label><input id="tGuides" type="number" min="0" max="100000" inputmode="numeric" dir="ltr"><p class="hint">اختياري</p></div>
+        <div class="f"><label for="tStart">موعد البدء المتوقع</label><input id="tStart" type="month" dir="ltr"><p class="hint">اختياري</p></div>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="s4">
+      <h2 id="s4"><span>5</span>المنصات المطلوبة</h2>
+      <div class="opts" role="group" aria-labelledby="s4" id="plat">
+        <label class="chk"><input type="checkbox" value="app" checked><span id="platApp">تطبيق الحاج</span></label>
+        <label class="chk"><input type="checkbox" value="field" checked><span id="platField">تطبيق الفريق الميداني</span></label>
+        <label class="chk"><input type="checkbox" value="ops" checked>غرفة العمليات</label>
+      </div>
+      <div class="f full" style="margin-top:14px"><label for="notes">ملاحظات</label><textarea id="notes" maxlength="1000"></textarea><p class="hint">اختياري — أي احتياج خاص لمنشأتك</p></div>
+    </section>
+
+    <section class="card">
+      <div class="f" id="consentF"><label class="consent"><input type="checkbox" id="consent" required><span>أوافق على معالجة بياناتي لغرض التسجيل والتواصل، وفق نظام حماية البيانات الشخصية.</span></label><p class="err">يلزم الموافقة لإرسال التسجيل.</p></div>
+      <button class="btn" type="submit" id="send">إرسال التسجيل</button>
+      <p class="alert" id="fail" role="alert"></p>
+      <p class="note">بياناتك لا تظهر إلا لفريق رِفق.</p>
+    </section>
+  </form>
+
+  <section class="card done" id="done" aria-live="polite" tabindex="-1">
+    <div class="ok"><svg width="36" height="36"><use href="#i-check"/></svg></div>
+    <h2>تم استلام تسجيلك</h2>
+    <p>شكرًا لك. سيتواصل معك فريق رِفق على بيانات التواصل التي أدخلتها.</p>
+    <span class="ref" id="ref"></span>
+    <div class="row"><a class="p" href="index.html">الرئيسية</a><a id="back" href="hajj.html">العودة للجولة</a></div>
+  </section>
+</main>
+<footer><b style="color:var(--primary)">رِفق</b> — تقنية تعتني بكم</footer>
+<script>/*__SCRIPT__*/</script>
+</body>
+</html>
