@@ -321,6 +321,7 @@ details.rates summary{padding:2px 0}
                 <option value="10">10%</option>
                 <option value="20" selected>20%</option>
                 <option value="30">30%</option>
+                <option value="35">35%</option>
                 <option value="40">40%</option>
                 <option value="50">50%</option>
               </select>
@@ -409,11 +410,12 @@ details.rates summary{padding:2px 0}
       <section class="notes">
         <h2>كيف نحسب</h2>
         <ul>
-          <li>النسب تقديرية، مبنية على عروض منشورة في 2026. مثال: عرض الراجحي على هيونداي أكسنت في أغسطس 2026 كان بهامش ربح 2.14% لمحوّلي الراتب و2.95% لغيرهم. النسبة النهائية تحددها الجهة بعد سجلك في سمة وجهة عملك.</li>
+          <li>راية وعبد اللطيف جميل: النسبة مأخوذة من أمثلة الإفصاح الرسمية في مواقعهم (نوفمبر 2026). مثال راية: سيارة 107,279 بدون دفعة أولى، دفعة أخيرة 35%، 60 شهر، قسط 1,843 ومعدل سنوي 11.68%. مثال عبد اللطيف جميل: نسبة 11.5% ودفعة أخيرة 40% ومعدل سنوي 16.77%.</li>
+          <li>البنوك: مبنية على عروض منشورة في 2026، مثل عرض الراجحي على هيونداي أكسنت في أغسطس 2026 بهامش 2.14% لمحوّلي الراتب و2.95% لغيرهم. اليسر والأمثل تقدير. النسبة النهائية تحددها الجهة بعد سجلك في سمة.</li>
           <li>الربح بهامش ثابت سنوي على كامل مبلغ التمويل: الربح = مبلغ التمويل × الهامش × عدد السنوات. القسط = (مبلغ التمويل + الربح − الدفعة الأخيرة) ÷ عدد الأشهر.</li>
-          <li>معدل النسبة السنوي (APR) محسوب من الدفعات الفعلية، ويوضح التكلفة الحقيقية للتمويل. يكون عادة قرابة ضعف الهامش الثابت.</li>
+          <li>معدل النسبة السنوي (APR) فعلي سنوي محسوب من الدفعات والرسوم، بنفس طريقة الإفصاح عند الجهات، ويوضح التكلفة الحقيقية للتمويل.</li>
           <li>حد القسط: 33.33% من الراتب للموظف و25% للمتقاعد، وهو المطبّق عند أغلب الجهات حسب مبادئ التمويل المسؤول من البنك المركزي السعودي (ساما). نخصم منه أي أقساط قائمة.</li>
-          <li>الرسوم الإدارية 1% من مبلغ التمويل بحد أقصى 5,000 ريال. شروط العمر: من 21 سنة، وألا يتجاوز عمرك 65 سنة عند نهاية التمويل.</li>
+          <li>الرسوم الإدارية 1% من مبلغ التمويل بحد أقصى 5,000 ريال (عبد اللطيف جميل 0.5%). شروط العمر: من 21 سنة، وألا يتجاوز عمرك 65 سنة عند نهاية التمويل (راية: 60 سنة).</li>
           <li>التأمين الشامل إلزامي على السيارة الممولة، ويُجدَّد سنويًا على قيمة تنقص قرابة 15% كل سنة. السعر الفعلي يتأثر بسجلك المروري وخصم عدم المطالبات ونسبة التحمل ومدينتك.</li>
           <li>العمر والجنس يؤثران على التأمين فقط. التمويل لا يفرّق بين ذكر وأنثى.</li>
         </ul>
@@ -439,7 +441,7 @@ details.rates summary{padding:2px 0}
     private:{label:'قطاع خاص', add:0.75}, retired:{label:'متقاعد', add:0.5}
   };
   var LENDERS = [
-    {id:'rajhi',   name:'مصرف الراجحي',            type:'bank', rate:2.90, minSalary:4000, minDown:0,  maxBalloon:50},
+    {id:'rajhi',   name:'مصرف الراجحي',            type:'bank', rate:2.90, minSalary:4000, minDown:0,  maxBalloon:50, src:'offer'},
     {id:'snb',     name:'البنك الأهلي السعودي',     type:'bank', rate:3.10, minSalary:4000, minDown:10, maxBalloon:40},
     {id:'riyad',   name:'بنك الرياض',               type:'bank', rate:3.00, minSalary:4000, minDown:10, maxBalloon:40},
     {id:'alinma',  name:'مصرف الإنماء',             type:'bank', rate:3.25, minSalary:4000, minDown:0,  maxBalloon:40},
@@ -448,11 +450,14 @@ details.rates summary{padding:2px 0}
     {id:'anb',     name:'البنك العربي الوطني',      type:'bank', rate:2.95, minSalary:4000, minDown:0,  maxBalloon:40},
     {id:'sab',     name:'البنك السعودي الأول (ساب)', type:'bank', rate:3.20, minSalary:5000, minDown:0,  maxBalloon:40},
     {id:'bsf',     name:'البنك السعودي الفرنسي',    type:'bank', rate:3.30, minSalary:5000, minDown:0,  maxBalloon:40},
-    {id:'raya',    name:'راية للتمويل',             type:'co',   rate:4.25, minSalary:3000, minDown:0,  maxBalloon:30},
-    {id:'alj',     name:'عبد اللطيف جميل للتمويل',   type:'co',   rate:3.95, minSalary:3000, minDown:10, maxBalloon:30},
-    {id:'yusr',    name:'اليسر للإجارة والتمويل',    type:'co',   rate:4.50, minSalary:3000, minDown:0,  maxBalloon:30},
-    {id:'amthal',  name:'الأمثل للتمويل',           type:'co',   rate:4.60, minSalary:3000, minDown:0,  maxBalloon:30}
+    // Raya: calibrated to its own disclosure (107,279 SAR, no down, 35% final, 60 months, 1,843/month, APR 11.68%).
+    {id:'raya',    name:'راية للتمويل',             type:'co',   rate:7.60, minSalary:5000, minDown:0,  maxBalloon:50, maxAgeEnd:60, src:'official'},
+    // ALJ: its disclosure lists 11.5% financing rate, 40% final payment, APR 16.77%, admin 0.5%.
+    {id:'alj',     name:'عبد اللطيف جميل للتمويل',   type:'co',   rate:11.50, minSalary:3000, minDown:0, maxBalloon:40, admin:0.5, src:'official'},
+    {id:'yusr',    name:'اليسر للإجارة والتمويل',    type:'co',   rate:9.00, minSalary:3000, minDown:0,  maxBalloon:30},
+    {id:'amthal',  name:'الأمثل للتمويل',           type:'co',   rate:9.50, minSalary:3000, minDown:0,  maxBalloon:30}
   ];
+  var SRC = {official:'إفصاح رسمي من الجهة (نوفمبر 2026)', offer:'عرض منشور في 2026', est:'تقدير'};
   var INSURERS = [
     {id:'rajhitak', name:'تكافل الراجحي',      rate:2.50, min:1500, fem:0.92, youth:1.05},
     {id:'walaa',    name:'ولاء للتأمين',       rate:2.60, min:1500, fem:0.90, youth:1.00},
@@ -554,12 +559,12 @@ details.rates summary{padding:2px 0}
   var rates = Object.assign({}, DEFAULT_RATES);
   var enabled = {};
   LENDERS.forEach(function(l){ enabled[l.id] = true; });
-  var saved = store.get('carcalc-rates-v1');
+  var saved = store.get('carcalc-rates-v2');
   if (saved){
     if (saved.rates) Object.keys(saved.rates).forEach(function(k){ if (k in rates && isFinite(saved.rates[k])) rates[k] = saved.rates[k]; });
     if (saved.enabled) Object.keys(saved.enabled).forEach(function(k){ if (k in enabled) enabled[k] = !!saved.enabled[k]; });
   }
-  function saveRates(){ store.set('carcalc-rates-v1', {rates:rates, enabled:enabled}); }
+  function saveRates(){ store.set('carcalc-rates-v2', {rates:rates, enabled:enabled}); }
 
   /* ---------- insurance ---------- */
   function premium(I, ctx, k){
@@ -588,7 +593,7 @@ details.rates summary{padding:2px 0}
     var lo = 0, hi = 0.02;
     while (pv(hi) > 0 && hi < 1) hi *= 2;
     for (var it = 0; it < 70; it++){ var mid = (lo + hi) / 2; if (pv(mid) > 0) lo = mid; else hi = mid; }
-    return (lo + hi) / 2 * 12 * 100;
+    return (Math.pow(1 + (lo + hi) / 2, 12) - 1) * 100; // effective annual, as Saudi lenders disclose it
   }
 
   function calcLender(L, ctx, insurer){
@@ -599,7 +604,7 @@ details.rates summary{padding:2px 0}
     if (ctx.used && ctx.carAge > t.maxCarAge) block('لا تموّل سيارات أقدم من ' + t.maxCarAge + ' سنوات');
 
     var n = ctx.term;
-    var maxByAge = Math.floor(t.maxAgeEnd - ctx.age) * 12;
+    var maxByAge = Math.floor((L.maxAgeEnd || t.maxAgeEnd) - ctx.age) * 12;
     var maxByCar = ctx.used ? (t.maxCarAgeEnd - ctx.carAge) * 12 : 60;
     var nMax = Math.min(60, maxByAge, maxByCar);
     if (nMax < 12){
@@ -621,7 +626,7 @@ details.rates summary{padding:2px 0}
     var rate = rates['l-' + L.id] + SECTOR[ctx.sector].add + (ctx.transfer ? 0 : t.transferAdd) + (ctx.used ? t.usedAdd : 0);
     var profit = F * rate / 100 * years;
     var monthlyFin = (F + profit - B) / n;
-    var admin = Math.min(F * 0.01, 5000);
+    var admin = Math.min(F * (L.admin != null ? L.admin : 1) / 100, 5000);
     var ins = insCost(insurer, ctx, n);
     var insMonthly = ctx.includeIns ? ins.total / n : 0;
     var monthly = monthlyFin + insMonthly;
@@ -803,6 +808,7 @@ details.rates summary{padding:2px 0}
     return '<article class="offer ' + r.status + (isBest ? ' is-best' : '') + '">' +
       '<div class="o-name"><strong>' + esc(r.L.name) + '</strong><span class="chip">' + TYPE[r.L.type].label + '</span>' +
         (isBest ? '<span class="chip best">الأفضل لك</span>' : '') +
+        (r.L.src === 'official' ? '<span class="chip">إفصاح رسمي</span>' : '') +
         (r.forcedDown ? '<span class="chip need">دفعة أولى ' + r.L.minDown + '% إلزامية</span>' : '') + '</div>' +
       '<div class="o-cell o-monthly"><span class="k">القسط الشهري</span><span class="v">' + fmt(r.monthly) + '</span></div>' +
       '<div class="o-cell o-total"><span class="k">إجمالي التكلفة</span><span class="v">' + fmt(r.total) + '</span></div>' +
@@ -819,6 +825,7 @@ details.rates summary{padding:2px 0}
           '<div><dt>رسوم إدارية</dt><dd>' + fmt(r.admin) + '</dd></div>' +
           '<div><dt>قسط التمويل بدون تأمين</dt><dd>' + fmt(r.monthlyFin) + '</dd></div>' +
           '<div><dt>التأمين طوال المدة</dt><dd>' + fmt(r.ins.total) + (r.insMonthly ? '' : ' (يُدفع سنويًا)') + '</dd></div>' +
+          '<div><dt>مصدر النسبة</dt><dd>' + SRC[r.L.src || 'est'] + '</dd></div>' +
         '</dl>' +
         ((notes.length || tip) ? '<ul class="notes-list">' + notes.map(function(n){ return '<li>' + esc(n) + '</li>'; }).join('') +
           (tip ? '<li class="tip">' + esc(tip) + '</li>' : '') + '</ul>' : '') +
